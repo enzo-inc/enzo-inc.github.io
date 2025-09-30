@@ -123,3 +123,51 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Blog prose styling - with higher specificity */
+article.prose h1,
+.prose.prose-gray h1 {
+  font-size: 2.25rem;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  line-height: 1.1111111;
+  font-weight: 800;
+  display: block;
+}
+
+article.prose h2,
+.prose.prose-gray h2 {
+  font-size: 1.875rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.3333333;
+  font-weight: 700;
+  display: block;
+}
+
+article.prose h3,
+.prose.prose-gray h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-weight: 600;
+  display: block;
+}
+
+article.prose p,
+.prose.prose-gray p {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  display: block;
+}
+
+article.prose strong,
+.prose.prose-gray strong {
+  font-weight: 600;
+}
+
+article.prose em,
+.prose.prose-gray em {
+  font-style: italic;
+}

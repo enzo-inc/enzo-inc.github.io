@@ -2,8 +2,10 @@ import { Github, Linkedin, Twitter, Mail, Code2, Brain, Zap } from "lucide-react
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { getRecentPosts } from "@/lib/blog"
 
-export default function HomePage() {
+export default async function HomePage() {
+  const recentPosts = await getRecentPosts(3)
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto px-6 py-8">
@@ -62,11 +64,18 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <Link href="https://github.com/enzo-inc">
-            <Button variant="outline" className="rounded-lg bg-transparent">
-              View Code →
-            </Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href="https://github.com/enzo-inc">
+              <Button variant="outline" className="rounded-lg bg-transparent">
+                View Code →
+              </Button>
+            </Link>
+            <Link href="/writings">
+              <Button variant="outline" className="rounded-lg bg-transparent">
+                View Writings →
+              </Button>
+            </Link>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -181,43 +190,43 @@ export default function HomePage() {
             {/* Research */}
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-6">Research That Shapes My Work</h2>
-              <ul className="space-y-2">
-                <li>
+              <ul className="space-y-2 list-disc pl-4">
+                <li className="text-sm">
                   <Link
                     href="https://arxiv.org/abs/1907.08588"
-                    className="text-foreground hover:text-accent transition-colors text-sm block"
+                    className="text-foreground hover:text-accent transition-colors"
                   >
                     On Usefulness of the Deep-Learning-Based Bug Localization Models to Practitioners
                   </Link>
                 </li>
-                <li>
+                <li className="text-sm">
                   <Link
                     href="https://arxiv.org/abs/2306.03091"
-                    className="text-foreground hover:text-accent transition-colors text-sm block"
+                    className="text-foreground hover:text-accent transition-colors"
                   >
                     RepoBench: Benchmarking Repository-Level Code Auto-Completion Systems
                   </Link>
                 </li>
-                <li>
+                <li className="text-sm">
                   <Link
                     href="https://arxiv.org/abs/2406.01422"
-                    className="text-foreground hover:text-accent transition-colors text-sm block"
+                    className="text-foreground hover:text-accent transition-colors"
                   >
                     Alibaba LingmaAgent: Improving Automated Issue Resolution via Comprehensive Repository Exploration
                   </Link>
                 </li>
-                <li>
+                <li className="text-sm">
                   <Link
                     href="https://arxiv.org/abs/2412.01007"
-                    className="text-foreground hover:text-accent transition-colors text-sm block"
+                    className="text-foreground hover:text-accent transition-colors"
                   >
                     CoRNStack: High-Quality Contrastive Data for Better Code Retrieval and Reranking
                   </Link>
                 </li>
-                <li>
+                <li className="text-sm">
                   <Link
                     href="https://arxiv.org/abs/2109.00859"
-                    className="text-foreground hover:text-accent transition-colors text-sm block"
+                    className="text-foreground hover:text-accent transition-colors"
                   >
                     CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and
                     Generation
@@ -285,10 +294,37 @@ export default function HomePage() {
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-6">
                 <Link href="/writings" className="hover:text-accent transition-colors">
-                  Writings →
+                  Recent Writings →
                 </Link>
               </h2>
-              <p className="text-sm text-muted-foreground">More coming soon...</p>
+              
+              {recentPosts.length > 0 ? (
+                <div className="space-y-4">
+                  {recentPosts.map((post) => (
+                    <div key={post.slug} className="border-l-2 border-accent/20 pl-4">
+                      <h3 className="font-medium text-sm mb-1">
+                        <Link 
+                          href={`/writings/${post.slug}`} 
+                          className="text-accent hover:underline"
+                        >
+                          {post.title}
+                        </Link>
+                      </h3>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <time>{new Date(post.publishedAt).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}</time>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">More coming soon...</p>
+              )}
             </section>
           </div>
         </div>
