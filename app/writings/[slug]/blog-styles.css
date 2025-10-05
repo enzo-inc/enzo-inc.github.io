@@ -39,3 +39,40 @@
   font-style: italic !important;
 }
 
+.prose a {
+  color: #ff8c42 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255, 140, 66, 0.3) !important;
+  text-underline-offset: 3px !important;
+  transition: all 0.2s ease !important;
+}
+
+.prose a:hover {
+  color: #ff6b1a !important;
+  text-decoration-color: rgba(255, 107, 26, 0.6) !important;
+}
+
+.prose ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.prose ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.prose li {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.75 !important;
+}
+
+.prose li::marker {
+  color: currentColor !important;
+}
+
