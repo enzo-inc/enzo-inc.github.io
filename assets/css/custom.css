@@ -222,7 +222,8 @@ a:hover {
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-default) !important;
+  border-bottom: 1px solid var(--border-default) !important;
   border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 0.85rem;
@@ -232,7 +233,8 @@ a:hover {
 
 .social-link:hover {
   background: var(--bg-tertiary);
-  border-color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan) !important;
+  border-bottom: 1px solid var(--accent-cyan) !important;
   color: var(--accent-cyan) !important;
   box-shadow: var(--shadow-glow-cyan);
   transform: translateY(-2px);
