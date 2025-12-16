@@ -1,30 +1,58 @@
-# Enzo's personal homepage
+# Enzo's Personal Website
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Personal website built with Jekyll and the [Persephone theme](https://github.com/erlzhang/jekyll-theme-persephone), hosted on GitHub Pages.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/vincenzo-incuttis-projects/v0-enzo-s-personal-homepage)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/42BkHL7Iwc7)
+## Live Site
 
-## Overview
+**[https://enzo-inc.github.io](https://enzo-inc.github.io)**
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+## Local Development
 
-## Deployment
+```bash
+# Install Ruby (if not installed)
+brew install ruby
 
-Your project is live at:
+# Install bundler
+gem install bundler
 
-**[https://vercel.com/vincenzo-incuttis-projects/v0-enzo-s-personal-homepage](https://vercel.com/vincenzo-incuttis-projects/v0-enzo-s-personal-homepage)**
+# Install dependencies
+bundle install
 
-## Build your app
+# Run local server
+bundle exec jekyll serve
+```
 
-Continue building your app on:
+Visit http://localhost:4000 to preview.
 
-**[https://v0.app/chat/projects/42BkHL7Iwc7](https://v0.app/chat/projects/42BkHL7Iwc7)**
+## Adding Blog Posts
 
-## How It Works
+Create new posts in the `_posts/` directory with the naming format:
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+```
+YYYY-MM-DD-title-of-post.md
+```
+
+Example front matter:
+
+```yaml
+---
+layout: post
+title: "My Post Title"
+date: 2024-01-01
+---
+```
+
+## Structure
+
+```
+/
+├── _config.yml          # Site configuration
+├── _data/
+│   ├── projects.yml     # Projects data
+│   └── research.yml     # Research papers
+├── _posts/              # Blog posts
+├── assets/img/          # Images
+├── index.md             # Homepage
+├── blog.md              # Blog listing
+└── Gemfile              # Ruby dependencies
+```

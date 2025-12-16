@@ -1,0 +1,30 @@
+title: Enzo Incutti
+description: Building code review agents at Recurse
+author: Enzo Incutti
+email: enzo@recurse.ml
+
+url: "https://enzo-inc.github.io"
+baseurl: ""
+
+remote_theme: erlzhang/jekyll-theme-persephone
+
+# Social links
+social:
+  github: enzo-inc
+  twitter: enzo__inc
+  linkedin: vincenzo-incutti
+
+# Theme settings
+theme_setting:
+  blog_page: "blog.md"
+  about_page: "index.md"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Plugins (supported by GitHub Pages)
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-seo-tag

@@ -1,0 +1,15 @@
+- name: Neutral Network
+  url: https://github.com/samshapley/NeutralNetwork
+  description: GPT-4 powered YouTube comment bot
+
+- name: Tokenised Collateral Management
+  url: https://github.com/enzo-inc/Tokenised-Collateral-Management
+  description: BSV blockchain automated settlement
+
+- name: XRPLoyalties
+  url: https://github.com/enzo-inc/XRPLoyalties
+  description: XRPL artist royalty distribution
+
+- name: BaysOpt for Bacterial ABS
+  url: https://github.com/enzo-inc/BaysOpt-for-Bacterial-ABS
+  description: Bayesian optimization for biological sims
