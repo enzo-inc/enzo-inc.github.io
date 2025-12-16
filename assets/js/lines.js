@@ -6,7 +6,7 @@
   let heroBounds = null;
   const snakes = [];
   const maxSnakes = 16;
-  const spawnInterval = 2000; // ms between new snakes
+  const spawnInterval = 1000; // ms between new snakes
   
   // Colors from your theme
   const colors = [
@@ -20,14 +20,15 @@
     const hero = document.querySelector('.hero');
     if (hero) {
       const rect = hero.getBoundingClientRect();
-      // Use viewport coordinates directly for fixed-position canvas (no scroll offset)
+      // Use viewport coordinates directly for fixed-position canvas
+      // Horizontal: full window width, Vertical: hero section only
       heroBounds = {
-        left: rect.left,
-        top: rect.top,
-        right: rect.right,
-        bottom: rect.bottom,
-        width: rect.width,
-        height: rect.height
+        left: 0,                    // Full window width
+        top: rect.top,              // Hero top
+        right: width,               // Full window width
+        bottom: rect.bottom,        // Hero bottom
+        width: width,               // Full window width
+        height: rect.height         // Hero height
       };
     }
   }
@@ -42,21 +43,21 @@
     constructor() {
       if (!heroBounds) return;
       
-      // Randomly choose to start from top-left or top-right of hero
+      // Randomly choose to start from top-left or top-right of window
       const startFromRight = Math.random() > 0.5;
       const margin = 50;
       
       if (startFromRight) {
-        // Start from top-right of hero
+        // Start from top-right corner of window (within hero vertical bounds)
         this.points = [{ 
-          x: heroBounds.right - Math.random() * margin, 
+          x: width - Math.random() * margin, 
           y: heroBounds.top + Math.random() * margin 
         }];
         this.direction = Math.random() > 0.5 ? 'left' : 'down';
       } else {
-        // Start from top-left of hero
+        // Start from top-left corner of window (within hero vertical bounds)
         this.points = [{ 
-          x: heroBounds.left + Math.random() * margin, 
+          x: Math.random() * margin, 
           y: heroBounds.top + Math.random() * margin 
         }];
         this.direction = Math.random() > 0.5 ? 'right' : 'down';
@@ -64,7 +65,7 @@
       this.color = colors[Math.floor(Math.random() * colors.length)];
       this.speed = 3.5 + Math.random() * 2;
       this.lineWidth = 2 + Math.random() * 2;
-      this.maxLength = 300 + Math.random() * 200;
+      this.maxLength = 500 + Math.random() * 200;
       this.segmentLength = 100 + Math.random() * 100;
       this.currentSegmentProgress = 0;
       this.tailProgress = 0;
@@ -102,13 +103,14 @@
       this.currentSegmentProgress += this.speed;
       this.totalLength += this.speed;
       
-      // Turn at segment end or hero boundary (with small buffer)
+      // Turn at segment end or boundary
+      // Horizontal: full window width, Vertical: hero section
       const buffer = 20;
       if (this.currentSegmentProgress >= this.segmentLength ||
-          lastPoint.x > heroBounds.right + buffer || 
-          lastPoint.x < heroBounds.left - buffer ||
-          lastPoint.y > heroBounds.bottom + buffer || 
-          lastPoint.y < heroBounds.top - buffer) {
+          lastPoint.x > width + buffer ||           // Right edge of window
+          lastPoint.x < -buffer ||                   // Left edge of window
+          lastPoint.y > heroBounds.bottom + buffer || // Bottom of hero
+          lastPoint.y < heroBounds.top - buffer) {    // Top of hero
         this.turn();
       }
       
@@ -195,10 +197,10 @@
     ctx.clearRect(0, 0, width, height);
     
     if (heroBounds) {
-      // Clip drawing to hero area
+      // Clip drawing: full window width, hero height vertically
       ctx.save();
       ctx.beginPath();
-      ctx.rect(heroBounds.left, heroBounds.top, heroBounds.width, heroBounds.height);
+      ctx.rect(0, heroBounds.top, width, heroBounds.height);
       ctx.clip();
       
       // Update and draw snakes
