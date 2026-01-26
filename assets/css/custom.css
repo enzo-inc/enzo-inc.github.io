@@ -464,4 +464,23 @@ a:hover {
   *, *::before, *::after {
     transition-duration: 0.01ms !important;
   }
+
+  #clawd-canvas {
+    display: none;
+  }
+}
+
+/* ============================================
+   Claw'd Easter Egg
+   ============================================ */
+#clawd-canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+@media (max-width: 480px) {
+  #clawd-canvas {
+    display: none;
+  }
 }
