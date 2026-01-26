@@ -157,20 +157,26 @@
     return getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#000000';
   }
 
+  // Create a new Claude instance
+  function createClawd(startX) {
+    return {
+      x: startX,
+      y: CANVAS_HEIGHT - SPRITE_HEIGHT - 2,
+      baseY: CANVAS_HEIGHT - SPRITE_HEIGHT - 2,
+      direction: 1,
+      state: State.WALKING,
+      frame: 0,
+      stateTimer: 0,
+      targetBug: null,
+      jumpVelocity: 0,
+      isJumping: false
+    };
+  }
+
   // State
   let width = 0;
-  let clawd = {
-    x: 100,
-    y: CANVAS_HEIGHT - SPRITE_HEIGHT - 2,
-    baseY: CANVAS_HEIGHT - SPRITE_HEIGHT - 2,
-    direction: 1, // 1 = right, -1 = left
-    state: State.WALKING,
-    frame: 0,
-    stateTimer: 0,
-    targetBug: null,
-    jumpVelocity: 0,
-    isJumping: false
-  };
+  let clawds = [createClawd(100)];
+  let secondClawdSpawned = false;
   let bugs = [];
   let eatingParticles = [];
   let lastGameUpdate = 0;
@@ -182,13 +188,15 @@
     width = canvas.width = window.innerWidth;
     canvas.height = CANVAS_HEIGHT;
 
-    // Clamp Claw'd position to viewport
-    if (clawd.x > width - SPRITE_WIDTH - 20) {
-      clawd.x = width - SPRITE_WIDTH - 20;
-    }
-    if (clawd.x < 20) {
-      clawd.x = 20;
-    }
+    // Clamp all Claw'd positions to viewport
+    clawds.forEach(clawd => {
+      if (clawd.x > width - SPRITE_WIDTH - 20) {
+        clawd.x = width - SPRITE_WIDTH - 20;
+      }
+      if (clawd.x < 20) {
+        clawd.x = 20;
+      }
+    });
   }
 
   // Draw pixel sprite
@@ -238,7 +246,7 @@
   }
 
   // Get current sprite for Claw'd
-  function getClawdSprite() {
+  function getClawdSprite(clawd) {
     if (clawd.isJumping) return clawdSprites.jump;
 
     switch (clawd.state) {
@@ -297,19 +305,10 @@
     }
   }
 
-  // Update game logic (12fps)
-  function updateGame(timestamp) {
-    if (timestamp - lastGameUpdate < GAME_INTERVAL) return;
-    lastGameUpdate = timestamp;
-
+  // Update a single clawd's state machine
+  function updateClawd(clawd, timestamp) {
     clawd.frame++;
     clawd.stateTimer++;
-
-    // Spawn bugs periodically
-    if (timestamp - lastBugSpawn > BUG_SPAWN_INTERVAL) {
-      spawnBug();
-      lastBugSpawn = timestamp;
-    }
 
     // Handle jump physics
     if (clawd.isJumping) {
@@ -320,30 +319,6 @@
         clawd.y = clawd.baseY;
         clawd.isJumping = false;
         clawd.jumpVelocity = 0;
-      }
-    }
-
-    // Update eating particles
-    for (let i = eatingParticles.length - 1; i >= 0; i--) {
-      const p = eatingParticles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.3;
-      p.life -= 0.08;
-      if (p.life <= 0) {
-        eatingParticles.splice(i, 1);
-      }
-    }
-
-    // Update bugs being eaten (fade/shrink animation)
-    for (let i = bugs.length - 1; i >= 0; i--) {
-      const bug = bugs[i];
-      if (bug.beingEaten) {
-        bug.opacity -= 0.15;
-        bug.scale -= 0.1;
-        if (bug.opacity <= 0) {
-          bugs.splice(i, 1);
-        }
       }
     }
 
@@ -358,7 +333,7 @@
         }
         // Check for bugs to hunt
         if (bugs.length > 0) {
-          const nearestBug = findNearestBug();
+          const nearestBug = findNearestBug(clawd);
           if (nearestBug && !nearestBug.beingEaten) {
             clawd.targetBug = nearestBug;
             clawd.state = State.HUNTING;
@@ -385,7 +360,7 @@
 
         // Check for bugs to hunt
         if (bugs.length > 0) {
-          const nearestBug = findNearestBug();
+          const nearestBug = findNearestBug(clawd);
           if (nearestBug && !nearestBug.beingEaten) {
             clawd.targetBug = nearestBug;
             clawd.state = State.HUNTING;
@@ -396,7 +371,7 @@
 
       case State.HUNTING:
         // Always check for nearest bug (handles new spawns being closer)
-        const nearestBug = findNearestBug();
+        const nearestBug = findNearestBug(clawd);
         if (!nearestBug) {
           clawd.targetBug = null;
           clawd.state = State.WALKING;
@@ -431,6 +406,53 @@
         }
         break;
     }
+  }
+
+  // Update game logic (12fps)
+  function updateGame(timestamp) {
+    if (timestamp - lastGameUpdate < GAME_INTERVAL) return;
+    lastGameUpdate = timestamp;
+
+    // Spawn bugs periodically
+    if (timestamp - lastBugSpawn > BUG_SPAWN_INTERVAL) {
+      spawnBug();
+      lastBugSpawn = timestamp;
+    }
+
+    // Spawn second Claude at 10 bugs eaten
+    if (!secondClawdSpawned && bugsEaten >= 10) {
+      secondClawdSpawned = true;
+      const newClawd = createClawd(width - 150);
+      newClawd.direction = -1;
+      clawds.push(newClawd);
+    }
+
+    // Update all clawds
+    clawds.forEach(clawd => updateClawd(clawd, timestamp));
+
+    // Update eating particles
+    for (let i = eatingParticles.length - 1; i >= 0; i--) {
+      const p = eatingParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3;
+      p.life -= 0.08;
+      if (p.life <= 0) {
+        eatingParticles.splice(i, 1);
+      }
+    }
+
+    // Update bugs being eaten (fade/shrink animation)
+    for (let i = bugs.length - 1; i >= 0; i--) {
+      const bug = bugs[i];
+      if (bug.beingEaten) {
+        bug.opacity -= 0.15;
+        bug.scale -= 0.1;
+        if (bug.opacity <= 0) {
+          bugs.splice(i, 1);
+        }
+      }
+    }
 
     // Update bug wiggle animation
     bugs.forEach(bug => {
@@ -440,14 +462,21 @@
     });
   }
 
-  // Find nearest non-eaten bug
-  function findNearestBug() {
+  // Find nearest non-eaten bug for a specific clawd
+  function findNearestBug(clawd) {
     const clawdCenterX = clawd.x + SPRITE_WIDTH / 2;
     let nearest = null;
     let nearestDist = Infinity;
 
+    // Get bugs already targeted by other clawds
+    const targetedBugs = clawds
+      .filter(c => c !== clawd && c.targetBug)
+      .map(c => c.targetBug);
+
     for (const bug of bugs) {
       if (bug.beingEaten) continue;
+      // Skip bugs targeted by other clawds
+      if (targetedBugs.includes(bug)) continue;
       const dist = Math.abs(bug.x - clawdCenterX);
       if (dist < nearestDist) {
         nearestDist = dist;
@@ -483,9 +512,11 @@
     });
     ctx.globalAlpha = 1;
 
-    // Draw Claw'd
-    const sprite = getClawdSprite();
-    drawSprite(sprite, clawd.x, clawd.y, SPRITE_WIDTH, SPRITE_HEIGHT, clawd.direction === -1);
+    // Draw all Claw'ds
+    clawds.forEach(clawd => {
+      const sprite = getClawdSprite(clawd);
+      drawSprite(sprite, clawd.x, clawd.y, SPRITE_WIDTH, SPRITE_HEIGHT, clawd.direction === -1);
+    });
   }
 
   // Main loop
@@ -501,19 +532,22 @@
     const clickX = e.clientX;
     const clickY = e.clientY;
 
-    // Check if click is near Claw'd (use screen coordinates)
-    const clawdScreenX = clawd.x;
-    const clawdScreenY = rect.top + clawd.y;
+    // Check if click is on any Claw'd
+    for (const clawd of clawds) {
+      const clawdScreenX = clawd.x;
+      const clawdScreenY = rect.top + clawd.y;
 
-    if (clickX >= clawdScreenX && clickX <= clawdScreenX + SPRITE_WIDTH &&
-        clickY >= clawdScreenY && clickY <= clawdScreenY + SPRITE_HEIGHT) {
-      // Jump!
-      if (!clawd.isJumping) {
-        clawd.isJumping = true;
-        clawd.jumpVelocity = -8;
+      if (clickX >= clawdScreenX && clickX <= clawdScreenX + SPRITE_WIDTH &&
+          clickY >= clawdScreenY && clickY <= clawdScreenY + SPRITE_HEIGHT) {
+        // Jump!
+        if (!clawd.isJumping) {
+          clawd.isJumping = true;
+          clawd.jumpVelocity = -8;
 
-        // Spawn 1 bug (respects MAX_BUGS threshold)
-        spawnBug();
+          // Spawn 1 bug (respects MAX_BUGS threshold)
+          spawnBug();
+        }
+        break;
       }
     }
   }
