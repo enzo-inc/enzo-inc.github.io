@@ -8,7 +8,7 @@ title: Home
   <div class="hero-content">
     <h1 class="hero-name">Enzo Incutti</h1>
     <p class="hero-tagline">
-      I build systems that catch bugs before humans do. Currently obsessing over code review agents at <a href="https://www.recurse.ml/">Recurse</a> — think <code>git commit</code> that knows you're about to ship a bug.
+      I build systems that catch bugs before humans do. Currently obsessing over code review agents at <a href="https://www.recurse.ml/" class="animated-link">Recurse</a> — think <code>git commit</code> that knows you're about to ship a bug.
     </p>
     <div class="social-links">
       <a href="https://github.com/enzo-inc" class="social-link github">
@@ -72,35 +72,32 @@ title: Home
 
   <div class="section">
     <h2 class="section-title">Research That Shapes My Work</h2>
-    <ul class="research-list">
-      <li class="research-item">
-        <a href="https://arxiv.org/abs/1907.08588" class="research-link">On Usefulness of Deep-Learning-Based Bug Localization Models</a>
-        <p class="research-note">The paper that convinced me automated code review was possible.</p>
-      </li>
-      <li class="research-item">
-        <a href="https://arxiv.org/abs/2306.03091" class="research-link">RepoBench: Benchmarking Repository-Level Code Auto-Completion</a>
-        <p class="research-note">How I think about evaluating code understanding at scale.</p>
-      </li>
-      <li class="research-item">
-        <a href="https://arxiv.org/abs/2406.01422" class="research-link">Alibaba LingmaAgent: Automated Issue Resolution</a>
-        <p class="research-note">State-of-the-art in agent-driven codebase exploration.</p>
-      </li>
-      <li class="research-item">
-        <a href="https://arxiv.org/abs/2412.01007" class="research-link">CoRNStack: Contrastive Data for Code Retrieval</a>
-        <p class="research-note">Better embeddings = better semantic search.</p>
-      </li>
-      <li class="research-item">
-        <a href="https://arxiv.org/abs/2109.00859" class="research-link">CodeT5: Unified Pre-trained Encoder-Decoder for Code</a>
-        <p class="research-note">Foundation for understanding code as structured data.</p>
-      </li>
-    </ul>
+    <div class="research-group">
+      <h3 class="research-group-title">On Code Review Systems</h3>
+      <ul class="research-list">
+        <li class="research-item">
+          <a href="https://arxiv.org/abs/1907.08588" class="research-link">On Usefulness of Deep-Learning-Based Bug Localization Models</a>
+        </li>
+        <li class="research-item">
+          <a href="https://arxiv.org/abs/2306.03091" class="research-link">RepoBench: Benchmarking Repository-Level Code Auto-Completion</a>
+        </li>
+        <li class="research-item">
+          <a href="https://arxiv.org/abs/2406.01422" class="research-link">Alibaba LingmaAgent: Automated Issue Resolution</a>
+        </li>
+        <li class="research-item">
+          <a href="https://arxiv.org/abs/2412.01007" class="research-link">CoRNStack: Contrastive Data for Code Retrieval</a>
+        </li>
+        <li class="research-item">
+          <a href="https://arxiv.org/abs/2109.00859" class="research-link">CodeT5: Unified Pre-trained Encoder-Decoder for Code</a>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <div class="section">
     <h2 class="section-title">Writing</h2>
     <div class="content">
-      <p class="writing-subtitle">More Coming</p>
-      <a href="/blog/">View all posts →</a>
+      <a href="/blog/" class="animated-link">View all posts →</a>
     </div>
   </div>
 </div>

@@ -9,6 +9,8 @@
   --muted: #666666;
   --grid: #e0e0e0;
   --font: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  --spring-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring-duration: 0.3s;
 }
 
 * {
@@ -104,7 +106,7 @@ a:hover {
 .social-link {
   font-size: 11px;
   color: var(--text);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
@@ -112,13 +114,21 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to right, var(--accent) 50%, transparent 50%);
+  background-size: 200% 100%;
+  background-position: right;
+  transition: color var(--spring-duration) var(--spring-easing),
+              border-color var(--spring-duration) var(--spring-easing),
+              background-position var(--spring-duration) var(--spring-easing);
 }
 
 .social-link:hover {
-  background: var(--accent);
-  border-color: var(--accent);
   color: var(--bg);
+  border-color: var(--accent);
   text-decoration: none;
+  background-position: left;
 }
 
 .social-link svg {
@@ -138,6 +148,33 @@ a:hover {
   color: var(--bg);
   padding: 2px 6px;
   font-family: var(--font);
+}
+
+/* Animated inline links */
+.animated-link {
+  position: relative;
+  display: inline-block;
+}
+
+.animated-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--spring-duration) var(--spring-easing);
+}
+
+.animated-link:hover {
+  text-decoration: none;
+}
+
+.animated-link:hover::after {
+  transform: scaleX(1);
 }
 
 /* ============================================
@@ -204,16 +241,36 @@ a:hover {
 .project-card {
   display: block;
   padding: 10px;
+  padding-left: 13px;
   border: 1px solid var(--text);
-  border-left: 3px solid var(--accent);
   background: var(--bg);
   text-decoration: none;
+  position: relative;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  bottom: -1px;
+  width: 3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform var(--spring-duration) var(--spring-easing);
 }
 
 .project-card:hover {
-  background: var(--text);
-  color: var(--bg);
   text-decoration: none;
+}
+
+.project-card:hover::before {
+  transform: scaleY(1);
+}
+
+.project-card:hover .tech-tag {
+  background: var(--accent);
 }
 
 .project-card-title {
@@ -246,15 +303,28 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   font-weight: 500;
+  transition: background var(--spring-duration) var(--spring-easing);
 }
 
-.project-card:hover .tech-tag {
-  background: var(--accent);
-}
 
 /* ============================================
    Research List
    ============================================ */
+.research-group {
+  border: 1px solid var(--text);
+  padding: 10px;
+  position: relative;
+}
+
+.research-group-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
 .research-list {
   list-style: none;
   padding: 0;
@@ -262,8 +332,8 @@ a:hover {
 }
 
 .research-item {
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 .research-item:last-child {
@@ -273,24 +343,33 @@ a:hover {
 }
 
 .research-link {
-  font-size: 12px;
+  font-size: 11px;
   display: inline-block;
-  margin-bottom: 3px;
   line-height: 1.3;
   font-weight: 500;
-  border-bottom: 1px solid var(--grid);
   padding-bottom: 2px;
+  position: relative;
+}
+
+.research-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--spring-duration) var(--spring-easing);
 }
 
 .research-link:hover {
   text-decoration: none;
-  border-bottom-color: var(--accent);
 }
 
-.research-note {
-  font-size: 10px;
-  color: var(--muted);
-  line-height: 1.3;
+.research-link:hover::after {
+  transform: scaleX(1);
 }
 
 /* ============================================
@@ -327,10 +406,29 @@ a:hover {
 
 .footer-link {
   color: var(--text);
+  position: relative;
+}
+
+.footer-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--spring-duration) var(--spring-easing);
 }
 
 .footer-link:hover {
   color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-link:hover::after {
+  transform: scaleX(1);
 }
 
 /* ============================================
@@ -359,5 +457,11 @@ a:hover {
   .content-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
   }
 }
