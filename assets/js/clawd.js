@@ -128,7 +128,7 @@
   const canvas = document.createElement('canvas');
   canvas.id = 'clawd-canvas';
   canvas.style.cssText = `
-    position: absolute;
+    position: fixed;
     left: 0;
     width: 100%;
     height: ${CANVAS_HEIGHT}px;
@@ -137,19 +137,20 @@
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   `;
-
-  // Position canvas relative to footer
-  const footer = document.querySelector('.site-footer');
-  if (footer) {
-    footer.style.position = 'relative';
-    canvas.style.bottom = '100%';
-    footer.insertBefore(canvas, footer.firstChild);
-  } else {
-    canvas.style.position = 'fixed';
-    canvas.style.bottom = '40px';
-    document.body.appendChild(canvas);
-  }
+  document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
+
+  // Position canvas above footer
+  function updateCanvasPosition() {
+    const footer = document.querySelector('.site-footer');
+    if (footer) {
+      const footerRect = footer.getBoundingClientRect();
+      const bottomOffset = window.innerHeight - footerRect.top;
+      canvas.style.bottom = `${bottomOffset}px`;
+    } else {
+      canvas.style.bottom = '40px';
+    }
+  }
 
   // Get text color from CSS variable
   function getTextColor() {
@@ -174,6 +175,7 @@
   let eatingParticles = [];
   let lastGameUpdate = 0;
   let lastBugSpawn = 0;
+  let bugsEaten = 0;
 
   // Resize handler
   function resize() {
@@ -416,6 +418,7 @@
           clawd.state = State.EATING;
           clawd.stateTimer = 0;
           clawd.targetBug.beingEaten = true;
+          bugsEaten++;
           createEatingParticles(clawd.targetBug.x, clawd.targetBug.y);
         }
         break;
@@ -458,13 +461,20 @@
   function render() {
     ctx.clearRect(0, 0, width, CANVAS_HEIGHT);
 
+    // Draw bugs eaten counter
+    const color = getTextColor();
+    ctx.fillStyle = color;
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`bugs eaten: ${bugsEaten}`, 10, 10);
+
     // Draw bugs
     bugs.forEach(bug => {
       drawTextBug(bug);
     });
 
     // Draw eating particles
-    const color = getTextColor();
     eatingParticles.forEach(p => {
       ctx.globalAlpha = p.life;
       ctx.fillStyle = color;
@@ -511,7 +521,12 @@
   // Initialize
   function init() {
     resize();
-    window.addEventListener('resize', resize);
+    updateCanvasPosition();
+    window.addEventListener('resize', () => {
+      resize();
+      updateCanvasPosition();
+    });
+    window.addEventListener('scroll', updateCanvasPosition);
 
     // Enable pointer events for click detection
     canvas.style.pointerEvents = 'auto';
